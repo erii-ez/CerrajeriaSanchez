@@ -1,42 +1,63 @@
+@import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@800;900&family=Inter:wght@400;500;600&display=swap');
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* Design System Colors */
+  --navy: #0a1628;
+  --navy-light: #13243f;
+  --orange: #ff5a00;
+  --orange-glow: rgba(255, 90, 0, 0.4);
+  --white: #ffffff;
+  --bg-light: #f4f6f8;
+  --text-gray: #8a9bb1;
+  --border-subtle: #e2e8f0;
+  
+  /* Typography */
+  --font-display: 'Barlow Condensed', sans-serif;
+  --font-body: 'Inter', sans-serif;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
+* { box-sizing: border-box; margin: 0; padding: 0; }
 
-html,
 body {
-  max-width: 100vw;
-  overflow-x: hidden;
-}
-
-body {
-  color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
+  background-color: var(--white); /* Eliminamos el fondo negro */
+  color: var(--navy);
+  font-family: var(--font-body);
   -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
 }
 
-* {
-  box-sizing: border-box;
-  padding: 0;
-  margin: 0;
+
+
+/* Contenedor Mobile-First que simula la pantalla del celular en escritorio */
+.mobile-container {
+  width: 100%;
+  min-height: 100vh;
+  position: relative;
+  overflow-x: hidden;
+  /* Eliminamos el max-width y el box-shadow */
 }
 
-a {
-  color: inherit;
-  text-decoration: none;
-}
-
-@media (prefers-color-scheme: dark) {
-  html {
-    color-scheme: dark;
+/* Hacemos que el Hero Section se vea mejor en PC */
+@media (min-width: 768px) {
+  .font-display {
+    font-size: 80px !important; /* Letra más grande en escritorio */
+  }
+  
+  /* El grid de servicios se pone en 3 columnas en lugar de 1 */
+  .services-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
   }
 }
+
+/* Utilidades tipográficas */
+.font-display { font-family: var(--font-display); text-transform: uppercase; }
+.text-orange { color: var(--orange); }
+.text-white { color: var(--white); }
+
+/* Animación del botón FAB */
+@keyframes pulse-ring {
+  0% { transform: scale(0.8); box-shadow: 0 0 0 0 rgba(255, 90, 0, 0.7); }
+  70% { transform: scale(1); box-shadow: 0 0 0 15px rgba(255, 90, 0, 0); }
+  100% { transform: scale(0.8); box-shadow: 0 0 0 0 rgba(255, 90, 0, 0); }
+} 

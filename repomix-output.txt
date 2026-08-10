@@ -1,0 +1,1120 @@
+This file is a merged representation of the entire codebase, combined into a single document by Repomix.
+
+<file_summary>
+This section contains a summary of this file.
+
+<purpose>
+This file contains a packed representation of the entire repository's contents.
+It is designed to be easily consumable by AI systems for analysis, code review,
+or other automated processes.
+</purpose>
+
+<file_format>
+The content is organized as follows:
+1. This summary section
+2. Repository information
+3. Directory structure
+4. Repository files (if enabled)
+5. Multiple file entries, each consisting of:
+  - File path as an attribute
+  - Full contents of the file
+</file_format>
+
+<usage_guidelines>
+- This file should be treated as read-only. Any changes should be made to the
+  original repository files, not this packed version.
+- When processing this file, use the file path to distinguish
+  between different files in the repository.
+- Be aware that this file may contain sensitive information. Handle it with
+  the same level of security as you would the original repository.
+</usage_guidelines>
+
+<notes>
+- Some files may have been excluded based on .gitignore rules and Repomix's configuration
+- Binary files are not included in this packed representation. Please refer to the Repository Structure section for a complete list of file paths, including binary files
+- Files matching patterns in .gitignore are excluded
+- Files matching default ignore patterns are excluded
+- Files are sorted by Git change count (files with more changes are at the bottom)
+</notes>
+
+</file_summary>
+
+<directory_structure>
+public/
+  favicon.ico
+  file.svg
+  globe.svg
+  next.svg
+  vercel.svg
+  window.svg
+src/
+  components/
+    ButtonFab.jsx
+    EmergencyBand.jsx
+    FormContact.jsx
+    Header.jsx
+    HeroSection.jsx
+    ServiceCard.jsx
+    ServicesPreview.jsx
+    StatsBar.jsx
+  layouts/
+    BaseLayout.jsx
+  pages/
+    api/
+      hello.js
+      send-quote.js
+    _app.js
+    _document.js
+    index.js
+    nosotros.jsx
+    servicios.jsx
+  styles/
+    globals.css
+    Home.module.css
+.gitignore
+eslint.config.mjs
+jsconfig.json
+next.config.mjs
+package.json
+README.md
+</directory_structure>
+
+<files>
+This section contains the contents of the repository's files.
+
+<file path="src/components/ButtonFab.jsx">
+export default function ButtonFab() {
+  return (
+    <a href="tel:+524686893743" style={{
+      position: 'fixed',
+      bottom: '24px',
+      right: 'calc(20% - 240px + 24px)',
+      backgroundColor: 'var(--orange)',
+      color: 'white',
+      width: '60px',
+      height: '60px',
+      borderRadius: '50%',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      boxShadow: '0 4px 15px var(--orange-glow)',
+      animation: 'pulse-ring 2s infinite',
+      zIndex: 999,
+      cursor: 'pointer'
+    }}>
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+    </a>
+  );
+}
+</file>
+
+<file path="src/components/EmergencyBand.jsx">
+export default function EmergencyBand() {
+  return (
+    <section style={{ backgroundColor: 'var(--orange)', padding: '32px 24px', textAlign: 'center', color: 'white' }}>
+      <h2 className="font-display" style={{ fontSize: '28px', marginBottom: '16px' }}>¿ESTÁS EN UNA EMERGENCIA AHORA MISMO?</h2>
+      <button style={{ backgroundColor: 'white', color: 'var(--orange)', border: 'none', padding: '16px 32px', borderRadius: '30px', fontSize: '18px', fontWeight: 'bold', display: 'inline-flex', alignItems: 'center', gap: '8px' }}>
+        📞 468 689 3743
+      </button>
+    </section>
+  );
+}
+</file>
+
+<file path="src/components/FormContact.jsx">
+import { useState, useEffect } from 'react';
+
+export default function FormContact({ selectedServiceName }) {
+  // Estados del formulario
+  const [formData, setFormData] = useState({ nombre: '', telefono: '', detalles: '' });
+  const [status, setStatus] = useState('idle'); // idle, loading, success, error
+
+  // Lógica de horario nocturno (8 PM a 8 AM)
+  const horaActual = new Date().getHours();
+  const esHorarioNocturno = horaActual >= 22 || horaActual < 8;
+
+  // Manejador del envío asíncrono
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    
+    // Validación extra: si logran dar clic por error, no hace nada
+    if (esHorarioNocturno) return; 
+
+    setStatus('loading');
+
+    try {
+      // Petición asíncrona hacia nuestro propio backend en Next.js
+      const response = await fetch('/api/send-quote', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          ...formData,
+          servicio: selectedServiceName || 'Cotización General'
+        }),
+      });
+
+      if (response.ok) {
+        setStatus('success');
+        setFormData({ nombre: '', telefono: '', detalles: '' }); // Limpiar formulario
+      } else {
+        setStatus('error');
+      }
+    } catch (error) {
+      setStatus('error');
+    }
+  };
+
+  return (
+    <div style={{ backgroundColor: 'white', padding: '32px', borderRadius: '12px', boxShadow: '0 4px 20px rgba(0,0,0,0.05)' }}>
+      <h3 className="font-display" style={{ fontSize: '24px', color: 'var(--navy)', marginBottom: '8px' }}>Solicita una Cotización</h3>
+      
+      {esHorarioNocturno ? (
+        <div style={{ padding: '20px', backgroundColor: '#fff3cd', color: '#856404', borderRadius: '8px', borderLeft: '4px solid #ffeeba', marginTop: '16px' }}>
+          <h4 style={{ fontWeight: 'bold', marginBottom: '8px' }}>Atención fuera de horario comercial</h4>
+          <p style={{ fontSize: '14px', lineHeight: '1.5', marginBottom: '12px' }}>
+            Nuestro horario para recepción de cotizaciones y diligencias asíncronas es de 8:00 AM a 8:00 PM. 
+            Si te encuentras ante una urgencia, por favor comunícate inmediatamente a nuestra línea de atención continua.
+          </p>
+          <a href="tel:600000000" style={{ display: 'inline-block', backgroundColor: 'var(--orange)', color: 'white', padding: '10px 20px', borderRadius: '6px', fontWeight: 'bold', textDecoration: 'none' }}>
+            📞 Llamar a Emergencias 24/7
+          </a>
+        </div>
+      ) : (
+        <>
+          <p style={{ color: 'var(--text-gray)', fontSize: '14px', marginBottom: '24px' }}>
+            {selectedServiceName 
+              ? `Estás solicitando información para: ${selectedServiceName}`
+              : 'Selecciona un servicio del catálogo o envíanos tus dudas.'}
+          </p>
+
+          {status === 'success' ? (
+            <div style={{ padding: '16px', backgroundColor: '#dcfce7', color: '#166534', borderRadius: '8px', textAlign: 'center', fontWeight: 'bold' }}>
+              ¡Solicitud enviada correctamente! Nos comunicaremos contigo pronto.
+            </div>
+          ) : (
+            <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+              <input 
+                type="text" 
+                placeholder="Tu nombre" 
+                required 
+                value={formData.nombre}
+                onChange={(e) => setFormData({...formData, nombre: e.target.value})}
+                style={{ padding: '12px', borderRadius: '8px', border: '1px solid var(--border-subtle)', fontSize: '16px' }}
+              />
+              <input 
+                type="tel" 
+                placeholder="Teléfono de contacto" 
+                required 
+                value={formData.telefono}
+                onChange={(e) => setFormData({...formData, telefono: e.target.value})}
+                style={{ padding: '12px', borderRadius: '8px', border: '1px solid var(--border-subtle)', fontSize: '16px' }}
+              />
+              <textarea 
+                placeholder="Detalles de la diligencia o servicio (ej. Es un desalojo judicial programado para el viernes...)" 
+                required 
+                rows="4"
+                value={formData.detalles}
+                onChange={(e) => setFormData({...formData, detalles: e.target.value})}
+                style={{ padding: '12px', borderRadius: '8px', border: '1px solid var(--border-subtle)', fontSize: '16px', resize: 'vertical' }}
+              />
+              <button 
+                type="submit" 
+                disabled={status === 'loading'}
+                style={{ 
+                  padding: '16px', 
+                  backgroundColor: 'var(--navy)', 
+                  color: 'white', 
+                  border: 'none', 
+                  borderRadius: '8px', 
+                  fontSize: '16px', 
+                  fontWeight: 'bold',
+                  cursor: status === 'loading' ? 'not-allowed' : 'pointer',
+                  opacity: status === 'loading' ? 0.7 : 1
+                }}
+              >
+                {status === 'loading' ? 'Enviando solicitud...' : 'Enviar Solicitud'}
+              </button>
+            </form>
+          )}
+        </>
+      )}
+    </div>
+  );
+}
+</file>
+
+<file path="src/components/Header.jsx">
+import { useState } from 'react';
+import Link from 'next/link';
+
+export default function Header() {
+  // Estado para el menú principal
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  // Estado para el submenú de servicios
+  const [isServicesOpen, setIsServicesOpen] = useState(false);
+
+  // Lista de servicios para iterar en el submenú
+  const serviciosLista = [
+    { id: 1, nombre: "Apertura Automotriz", ruta: "/servicios" },
+    { id: 2, nombre: "Cerrajería Residencial", ruta: "/servicios" },
+    { id: 3, nombre: "Seguridad Comercial", ruta: "/servicios" },
+    { id: 4, nombre: "Apertura Cajas Fuertes", ruta: "/servicios" },
+    { id: 5, nombre: "Duplicado con Chip", ruta: "/servicios" }
+  ];
+
+  return (
+    <header 
+      style={{ position: 'sticky', top: 0, zIndex: 100 }}
+      // EVENTO DEL PUNTERO: Si el ratón sale de toda el área del header/menú, se cierra todo.
+      onMouseLeave={() => {
+        setIsMenuOpen(false);
+        setIsServicesOpen(false);
+      }}
+    >
+      <div style={{
+        backgroundColor: 'var(--navy)',
+        padding: '16px 24px',
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        position: 'relative',
+        zIndex: 101
+      }}>
+        
+        <Link href="/" style={{ display: 'flex', alignItems: 'center', gap: '8px', textDecoration: 'none' }}>
+          <div style={{ background: 'var(--orange)', borderRadius: '6px', padding: '4px 6px', display: 'flex' }}>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="7.5" cy="15.5" r="5.5"/><path d="m21 2-9.6 9.6"/><path d="m15.5 7.5 3 3L22 7l-3-3"/></svg>
+          </div>
+          <div style={{ lineHeight: '1', fontFamily: 'var(--font-display)', color: 'white' }}>
+            <span style={{ fontSize: '16px', display: 'block' }}>CERRAJERÍA</span>
+            <span style={{ fontSize: '16px', color: 'var(--orange)' }}>SÁNCHEZ</span>
+          </div>
+        </Link>
+
+        <button 
+          // EVENTO DEL PUNTERO: Despliega el menú principal al pasar el ratón por encima
+          onMouseEnter={() => setIsMenuOpen(true)} 
+          // Mantenemos el onClick como buena práctica de accesibilidad para móviles
+          onClick={() => setIsMenuOpen(!isMenuOpen)}
+          style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '4px' }}
+        >
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            {isMenuOpen ? (
+              <>
+                <line x1="18" y1="6" x2="6" y2="18"></line>
+                <line x1="6" y1="6" x2="18" y2="18"></line>
+              </>
+            ) : (
+              <>
+                <line x1="4" x2="20" y1="12" y2="12"/>
+                <line x1="4" x2="20" y1="6" y2="6"/>
+                <line x1="4" x2="20" y1="18" y2="18"/>
+              </>
+            )}
+          </svg>
+        </button>
+      </div>
+
+      {isMenuOpen && (
+        <nav style={{
+          position: 'absolute',
+          top: '100%',
+          left: 0,
+          width: '100%',
+          backgroundColor: 'var(--navy-light)',
+          display: 'flex',
+          flexDirection: 'column',
+          boxShadow: '0 10px 15px rgba(0,0,0,0.3)',
+          zIndex: 100,
+          borderTop: '1px solid #1c2e4a'
+        }}>
+          <Link 
+            href="/" 
+            onClick={() => setIsMenuOpen(false)}
+            style={{ color: 'white', padding: '20px 24px', textDecoration: 'none', fontSize: '16px', fontWeight: '500', borderBottom: '1px solid rgba(255,255,255,0.05)' }}
+          >
+            Inicio
+          </Link>
+          
+          {/* Contenedor del Submenú de Servicios */}
+          <div 
+            // EVENTOS DEL PUNTERO: Controlan la apertura y cierre del submenú
+            onMouseEnter={() => setIsServicesOpen(true)}
+            onMouseLeave={() => setIsServicesOpen(false)}
+            style={{ borderBottom: '1px solid rgba(255,255,255,0.05)' }}
+          >
+            <Link 
+              href="/servicios" 
+              onClick={() => setIsMenuOpen(false)}
+              style={{ color: 'white', padding: '20px 24px', textDecoration: 'none', fontSize: '16px', fontWeight: '500', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}
+            >
+              Catálogo y Cotizaciones
+              {/* Ícono de flecha que rota si el submenú está abierto */}
+              <svg style={{ transform: isServicesOpen ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 0.3s' }} width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+            </Link>
+
+            {/* Despliegue dinámico de los servicios */}
+            {isServicesOpen && (
+              <div style={{ backgroundColor: 'var(--navy)', display: 'flex', flexDirection: 'column' }}>
+                {serviciosLista.map((servicio) => (
+                  <Link 
+                    key={servicio.id}
+                    href={servicio.ruta}
+                    onClick={() => {
+                      setIsMenuOpen(false);
+                      setIsServicesOpen(false);
+                    }}
+                    style={{ 
+                      color: 'var(--text-gray)', 
+                      padding: '12px 24px 12px 48px', 
+                      textDecoration: 'none', 
+                      fontSize: '14px',
+                      borderBottom: '1px solid rgba(255,255,255,0.02)'
+                    }}
+                  >
+                    {servicio.nombre}
+                  </Link>
+                ))}
+              </div>
+            )}
+          </div>
+
+          <Link 
+            href="/nosotros" 
+            onClick={() => setIsMenuOpen(false)}
+            style={{ color: 'white', padding: '20px 24px', textDecoration: 'none', fontSize: '16px', fontWeight: '500' }}
+          >
+            Nuestra Historia
+          </Link>
+        </nav>
+      )}
+    </header>
+  );
+}
+</file>
+
+<file path="src/components/HeroSection.jsx">
+export default function HeroSection() {
+  return (
+    <section style={{ backgroundColor: 'var(--navy)', color: 'white', padding: '40px 24px', position: 'relative' }}>
+      <div style={{ display: 'inline-block', background: 'rgba(255,255,255,0.1)', padding: '6px 12px', borderRadius: '20px', fontSize: '12px', marginBottom: '24px' }}>
+        <span style={{ color: '#4ade80', marginRight: '6px' }}>●</span> Disponible ahora - Respuesta &lt; 15 min
+      </div>
+      
+      <h1 className="font-display" style={{ fontSize: '64px', lineHeight: '0.9', marginBottom: '16px' }}>
+        EMERGENCIAS <br/> <span className="text-orange">24/7</span>
+      </h1>
+      
+      <p style={{ color: 'var(--text-gray)', fontSize: '15px', lineHeight: '1.5', marginBottom: '32px' }}>
+        Más de <strong style={{ color: 'white' }}>20 años de experiencia</strong> en cerrajería profesional. Llegamos donde estés, cuando más lo necesitas.
+      </p>
+
+      <button style={{ width: '100%', padding: '18px', backgroundColor: 'var(--orange)', color: 'white', border: 'none', borderRadius: '12px', fontSize: '18px', fontWeight: 'bold', display: 'flex', justifyContent: 'center', gap: '8px', boxShadow: '0 8px 20px var(--orange-glow)' }}>
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+        LLAMAR AHORA
+      </button>
+    </section>
+  );
+}
+</file>
+
+<file path="src/components/ServiceCard.jsx">
+import { useState } from 'react'; // 1. Importamos useState
+
+export default function ServiceCard({ title, description, icon, isEmergency, price, isSelected, onClick }) {
+  // 2. Creamos un estado local para saber si el ratón está encima de esta tarjeta específica
+  const [isHovered, setIsHovered] = useState(false);
+
+  // 3. Lógica dinámica para la sombra
+  // Si está seleccionada -> Sombra naranja
+  // Si no está seleccionada pero el ratón está encima -> Sombra oscura pronunciada
+  // Si no pasa nada -> Sombra sutil por defecto
+  const shadowStyle = isSelected 
+    ? '0 8px 20px rgba(255, 90, 0, 0.15)' 
+    : (isHovered ? '0 12px 24px rgba(10, 22, 40, 0.12)' : '0 4px 6px rgba(0,0,0,0.02)');
+
+  const cardStyle = {
+    border: isSelected 
+      ? '2px solid var(--orange)' 
+      : (isEmergency ? '2px solid rgba(255, 90, 0, 0.5)' : '1px solid var(--border-subtle)'),
+    borderRadius: '12px',
+    padding: '20px',
+    backgroundColor: isSelected ? '#fffaf8' : 'white',
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '12px',
+    boxShadow: shadowStyle, // Aplicamos la variable de la sombra
+    transition: 'all 0.3s ease',
+    cursor: 'pointer',
+    // Si está seleccionada o tiene el ratón encima, la tarjeta da un pequeño salto
+    transform: (isSelected || isHovered) ? 'translateY(-4px)' : 'none' 
+  };
+
+  const iconWrapperStyle = {
+    backgroundColor: (isEmergency || isSelected) ? 'var(--orange)' : 'var(--bg-light)',
+    color: (isEmergency || isSelected) ? 'white' : 'var(--navy)',
+    padding: '10px',
+    borderRadius: '8px',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    fontSize: '20px',
+    transition: 'all 0.3s ease',
+  };
+
+  return (
+    <article 
+      style={cardStyle} 
+      onClick={onClick}
+      // 4. Agregamos los oyentes de eventos del DOM para detectar el ratón
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+    >
+      <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+          <div style={iconWrapperStyle}>
+            {icon}
+          </div>
+          <div>
+            <h3 style={{ fontSize: '18px', fontWeight: 'bold', color: 'var(--navy)', margin: 0 }}>
+              {title}
+            </h3>
+            {price && (
+              <span style={{ fontSize: '14px', color: 'var(--text-gray)', fontWeight: '500' }}>
+                Desde {price}
+              </span>
+            )}
+          </div>
+        </div>
+        
+        {isEmergency && (
+          <span style={{ backgroundColor: 'var(--orange)', color: 'white', fontSize: '10px', padding: '4px 8px', borderRadius: '12px', fontWeight: 'bold' }}>
+            24/7
+          </span>
+        )}
+      </div>
+      
+      <p style={{ fontSize: '14px', color: 'var(--text-gray)', lineHeight: '1.5', margin: 0 }}>
+        {description}
+      </p>
+    </article>
+  );
+}
+</file>
+
+<file path="src/components/ServicesPreview.jsx">
+export default function ServicesPreview() {
+  return (
+    <section style={{ padding: '40px 24px', backgroundColor: 'var(--bg-light)' }}>
+      <p className="font-display text-orange" style={{ fontSize: '14px', letterSpacing: '1px' }}>NUESTROS SERVICIOS</p>
+      <h2 className="font-display" style={{ fontSize: '32px', color: 'var(--navy)', marginBottom: '24px' }}>¿EN QUÉ TE AYUDAMOS?</h2>
+
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+        <div style={{ border: '2px solid var(--orange)', borderRadius: '12px', padding: '20px', backgroundColor: 'white' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '8px' }}>
+            <div style={{ background: 'var(--orange)', padding: '8px', borderRadius: '8px', color: 'white' }}>🚗</div>
+            <h3 style={{ fontSize: '18px', fontWeight: 'bold' }}>Automotriz <span style={{ background: 'var(--orange)', color: 'white', fontSize: '10px', padding: '2px 6px', borderRadius: '4px' }}>24/7</span></h3>
+          </div>
+          <p style={{ fontSize: '13px', color: '#666' }}>Apertura de vehículos sin daños, duplicado de llaves con chip, programación de mandos.</p>
+        </div>
+
+        <div style={{ backgroundColor: 'var(--navy)', color: 'white', borderRadius: '12px', padding: '20px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '8px' }}>
+            <div style={{ background: 'rgba(255,255,255,0.1)', padding: '8px', borderRadius: '8px' }}>🏢</div>
+            <h3 style={{ fontSize: '18px', fontWeight: 'bold' }}>Comercial</h3>
+          </div>
+          <p style={{ fontSize: '13px', color: 'var(--text-gray)' }}>Control de acceso, cerraduras de alta seguridad, sistemas de llave maestra para empresas.</p>
+        </div>
+      </div>
+    </section>
+  );
+}
+</file>
+
+<file path="src/components/StatsBar.jsx">
+export default function StatsBar() {
+  return (
+    <section style={{ backgroundColor: 'var(--navy-light)', padding: '24px', display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid #1c2e4a' }}>
+      <div style={{ textAlign: 'center', color: 'white' }}>
+        <div className="font-display text-orange" style={{ fontSize: '24px' }}>20+</div>
+        <div style={{ fontSize: '10px', color: 'var(--text-gray)' }}>Años de<br/>experiencia</div>
+      </div>
+      <div style={{ textAlign: 'center', color: 'white' }}>
+        <div className="font-display text-orange" style={{ fontSize: '24px' }}>1.2K+</div>
+        <div style={{ fontSize: '10px', color: 'var(--text-gray)' }}>Clientes<br/>satisfechos</div>
+      </div>
+      <div style={{ textAlign: 'center', color: 'white' }}>
+        <div className="font-display text-orange" style={{ fontSize: '24px' }}>&lt;15'</div>
+        <div style={{ fontSize: '10px', color: 'var(--text-gray)' }}>Tiempo de<br/>respuesta</div>
+      </div>
+    </section>
+  );
+}
+</file>
+
+<file path="src/layouts/BaseLayout.jsx">
+import Header from '../components/Header';
+import ButtonFab from '../components/ButtonFab';
+
+export default function BaseLayout({ children }) {
+  return (
+    <div className="mobile-container">
+      <Header />
+      <main>{children}</main>
+      <ButtonFab />
+    </div>
+  );
+}
+</file>
+
+<file path="src/pages/api/send-quote.js">
+import { Resend } from 'resend';
+
+// La clave secreta se lee desde las variables de entorno por seguridad
+const resend = new Resend(process.env.RESEND_API_KEY);
+
+export default async function handler(req, res) {
+  if (req.method !== 'POST') {
+    return res.status(405).json({ error: 'Método no permitido' });
+  }
+
+  try {
+    const { nombre, telefono, servicio, detalles } = req.body;
+
+    const data = await resend.emails.send({
+      from: 'Cotizaciones <onboarding@resend.dev>',
+      to: ['chavezsanchezerick@gmail.com'], 
+      subject: `Nueva solicitud de cotización: ${servicio}`,
+      html: `
+        <h3>Detalles de la solicitud</h3>
+        <ul>
+          <li><strong>Nombre:</strong> ${nombre}</li>
+          <li><strong>Teléfono:</strong> ${telefono}</li>
+          <li><strong>Servicio:</strong> ${servicio}</li>
+        </ul>
+        <p><strong>Comentarios:</strong> ${detalles}</p>
+      `,
+    });
+
+    res.status(200).json({ success: true, message: 'Solicitud enviada', data });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+}
+</file>
+
+<file path="src/pages/nosotros.jsx">
+
+</file>
+
+<file path="src/pages/servicios.jsx">
+import { useState } from 'react'; // 1. Importamos useState
+import Head from 'next/head';
+import BaseLayout from '../layouts/BaseLayout';
+import ServiceCard from '../components/ServiceCard';
+import FormContact from '../components/FormContact';
+
+export default function Servicios() {
+  // 2. Creamos un estado para guardar el ID del servicio seleccionado. Empieza vacío (null).
+  const [selectedService, setSelectedService] = useState(null);
+
+  const catalogoServicios = [
+    { id: 1, title: "Apertura Automotriz", icon: "🚗", description: "Apertura de vehículos sin daños...", isEmergency: true, price: "$500 MXN" },
+    { id: 2, title: "Cerrajería Residencial", icon: "🏠", description: "Apertura de puertas principales...", isEmergency: false, price: "$450 MXN" },
+    { id: 3, title: "Seguridad Comercial", icon: "🏢", description: "Control de acceso, cerraduras...", isEmergency: false, price: "$800 MXN" },
+    { id: 4, title: "Apertura de Cajas Fuertes", icon: "🔐", description: "Servicio especializado en apertura...", isEmergency: false, price: "Cotización previa" },
+    { id: 5, title: "Duplicado con Chip", icon: "🔑", description: "Corte y programación de llaves...", isEmergency: false, price: "$1,200 MXN" }
+  ];
+
+const servicioEncontrado = catalogoServicios.find(s => s.id === selectedService);
+const nombreServicio = servicioEncontrado ? servicioEncontrado.title : '';
+
+  return (
+    <BaseLayout>
+      <Head>
+        <title>Servicios y Catálogo | Cerrajería Express</title>
+      </Head>
+
+      <section style={{ backgroundColor: 'var(--navy)', color: 'white', padding: '60px 24px', textAlign: 'center' }}>
+        <h1 className="font-display" style={{ fontSize: '48px', marginBottom: '16px' }}>CATÁLOGO DE SERVICIOS</h1>
+        <p style={{ color: 'var(--text-gray)', maxWidth: '600px', margin: '0 auto', fontSize: '16px' }}>
+          Selecciona un servicio para solicitar tu cotización o atención inmediata.
+        </p>
+      </section>
+
+      <section style={{ padding: '60px 24px', backgroundColor: 'var(--bg-light)' }}>
+        <div style={{ 
+          display: 'grid', 
+          gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', 
+          gap: '24px',
+          maxWidth: '1200px',
+          margin: '0 auto'
+        }}>
+          
+          {catalogoServicios.map((servicio) => (
+            <ServiceCard 
+              key={servicio.id}
+              title={servicio.title}
+              icon={servicio.icon}
+              description={servicio.description}
+              isEmergency={servicio.isEmergency}
+              price={servicio.price}
+              // 3. Le pasamos las nuevas propiedades a la tarjeta
+              isSelected={selectedService === servicio.id}
+              onClick={() => setSelectedService(servicio.id)}
+            />
+          ))}
+
+        </div>
+      </section>
+      {/* Sección del Formulario Asíncrono */}
+      <section style={{ padding: '40px 24px', backgroundColor: 'var(--navy-light)', borderTop: '1px solid #1c2e4a' }}>
+        <div style={{ maxWidth: '600px', margin: '0 auto' }}>
+          <FormContact selectedServiceName={nombreServicio} />
+        </div>
+      </section>
+    </BaseLayout>
+  );
+}
+</file>
+
+<file path="public/file.svg">
+<svg fill="none" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg"><path d="M14.5 13.5V5.41a1 1 0 0 0-.3-.7L9.8.29A1 1 0 0 0 9.08 0H1.5v13.5A2.5 2.5 0 0 0 4 16h8a2.5 2.5 0 0 0 2.5-2.5m-1.5 0v-7H8v-5H3v12a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1M9.5 5V2.12L12.38 5zM5.13 5h-.62v1.25h2.12V5zm-.62 3h7.12v1.25H4.5zm.62 3h-.62v1.25h7.12V11z" clip-rule="evenodd" fill="#666" fill-rule="evenodd"/></svg>
+</file>
+
+<file path="public/globe.svg">
+<svg fill="none" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><g clip-path="url(#a)"><path fill-rule="evenodd" clip-rule="evenodd" d="M10.27 14.1a6.5 6.5 0 0 0 3.67-3.45q-1.24.21-2.7.34-.31 1.83-.97 3.1M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16m.48-1.52a7 7 0 0 1-.96 0H7.5a4 4 0 0 1-.84-1.32q-.38-.89-.63-2.08a40 40 0 0 0 3.92 0q-.25 1.2-.63 2.08a4 4 0 0 1-.84 1.31zm2.94-4.76q1.66-.15 2.95-.43a7 7 0 0 0 0-2.58q-1.3-.27-2.95-.43a18 18 0 0 1 0 3.44m-1.27-3.54a17 17 0 0 1 0 3.64 39 39 0 0 1-4.3 0 17 17 0 0 1 0-3.64 39 39 0 0 1 4.3 0m1.1-1.17q1.45.13 2.69.34a6.5 6.5 0 0 0-3.67-3.44q.65 1.26.98 3.1M8.48 1.5l.01.02q.41.37.84 1.31.38.89.63 2.08a40 40 0 0 0-3.92 0q.25-1.2.63-2.08a4 4 0 0 1 .85-1.32 7 7 0 0 1 .96 0m-2.75.4a6.5 6.5 0 0 0-3.67 3.44 29 29 0 0 1 2.7-.34q.31-1.83.97-3.1M4.58 6.28q-1.66.16-2.95.43a7 7 0 0 0 0 2.58q1.3.27 2.95.43a18 18 0 0 1 0-3.44m.17 4.71q-1.45-.12-2.69-.34a6.5 6.5 0 0 0 3.67 3.44q-.65-1.27-.98-3.1" fill="#666"/></g><defs><clipPath id="a"><path fill="#fff" d="M0 0h16v16H0z"/></clipPath></defs></svg>
+</file>
+
+<file path="public/next.svg">
+<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 394 80"><path fill="#000" d="M262 0h68.5v12.7h-27.2v66.6h-13.6V12.7H262V0ZM149 0v12.7H94v20.4h44.3v12.6H94v21h55v12.6H80.5V0h68.7zm34.3 0h-17.8l63.8 79.4h17.9l-32-39.7 32-39.6h-17.9l-23 28.6-23-28.6zm18.3 56.7-9-11-27.1 33.7h17.8l18.3-22.7z"/><path fill="#000" d="M81 79.3 17 0H0v79.3h13.6V17l50.2 62.3H81Zm252.6-.4c-1 0-1.8-.4-2.5-1s-1.1-1.6-1.1-2.6.3-1.8 1-2.5 1.6-1 2.6-1 1.8.3 2.5 1a3.4 3.4 0 0 1 .6 4.3 3.7 3.7 0 0 1-3 1.8zm23.2-33.5h6v23.3c0 2.1-.4 4-1.3 5.5a9.1 9.1 0 0 1-3.8 3.5c-1.6.8-3.5 1.3-5.7 1.3-2 0-3.7-.4-5.3-1s-2.8-1.8-3.7-3.2c-.9-1.3-1.4-3-1.4-5h6c.1.8.3 1.6.7 2.2s1 1.2 1.6 1.5c.7.4 1.5.5 2.4.5 1 0 1.8-.2 2.4-.6a4 4 0 0 0 1.6-1.8c.3-.8.5-1.8.5-3V45.5zm30.9 9.1a4.4 4.4 0 0 0-2-3.3 7.5 7.5 0 0 0-4.3-1.1c-1.3 0-2.4.2-3.3.5-.9.4-1.6 1-2 1.6a3.5 3.5 0 0 0-.3 4c.3.5.7.9 1.3 1.2l1.8 1 2 .5 3.2.8c1.3.3 2.5.7 3.7 1.2a13 13 0 0 1 3.2 1.8 8.1 8.1 0 0 1 3 6.5c0 2-.5 3.7-1.5 5.1a10 10 0 0 1-4.4 3.5c-1.8.8-4.1 1.2-6.8 1.2-2.6 0-4.9-.4-6.8-1.2-2-.8-3.4-2-4.5-3.5a10 10 0 0 1-1.7-5.6h6a5 5 0 0 0 3.5 4.6c1 .4 2.2.6 3.4.6 1.3 0 2.5-.2 3.5-.6 1-.4 1.8-1 2.4-1.7a4 4 0 0 0 .8-2.4c0-.9-.2-1.6-.7-2.2a11 11 0 0 0-2.1-1.4l-3.2-1-3.8-1c-2.8-.7-5-1.7-6.6-3.2a7.2 7.2 0 0 1-2.4-5.7 8 8 0 0 1 1.7-5 10 10 0 0 1 4.3-3.5c2-.8 4-1.2 6.4-1.2 2.3 0 4.4.4 6.2 1.2 1.8.8 3.2 2 4.3 3.4 1 1.4 1.5 3 1.5 5h-5.8z"/></svg>
+</file>
+
+<file path="public/vercel.svg">
+<svg fill="none" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1155 1000"><path d="m577.3 0 577.4 1000H0z" fill="#fff"/></svg>
+</file>
+
+<file path="public/window.svg">
+<svg fill="none" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><path fill-rule="evenodd" clip-rule="evenodd" d="M1.5 2.5h13v10a1 1 0 0 1-1 1h-11a1 1 0 0 1-1-1zM0 1h16v11.5a2.5 2.5 0 0 1-2.5 2.5h-11A2.5 2.5 0 0 1 0 12.5zm3.75 4.5a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5M7 4.75a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0m1.75.75a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5" fill="#666"/></svg>
+</file>
+
+<file path="src/pages/api/hello.js">
+// Next.js API route support: https://nextjs.org/docs/api-routes/introduction
+
+export default function handler(req, res) {
+  res.status(200).json({ name: "John Doe" });
+}
+</file>
+
+<file path="src/pages/_app.js">
+import "@/styles/globals.css";
+
+export default function App({ Component, pageProps }) {
+  return <Component {...pageProps} />;
+}
+</file>
+
+<file path="src/pages/_document.js">
+import { Html, Head, Main, NextScript } from "next/document";
+
+export default function Document() {
+  return (
+    <Html lang="en">
+      <Head />
+      <body>
+        <Main />
+        <NextScript />
+      </body>
+    </Html>
+  );
+}
+</file>
+
+<file path="src/pages/index.js">
+import Head from 'next/head';
+import BaseLayout from '../layouts/BaseLayout';
+import HeroSection from '../components/HeroSection';
+import StatsBar from '../components/StatsBar';
+import ServicesPreview from '../components/ServicesPreview';
+import EmergencyBand from '../components/EmergencyBand';
+import ServiceCard from '@/components/ServiceCard';
+
+export default function Home() {
+  return (
+    <BaseLayout>
+      <Head>
+        <title>Cerrajería Sánchez</title>
+      </Head>
+
+      <HeroSection />
+      <StatsBar />
+      <ServiceCard />
+      <ServicesPreview />
+      <EmergencyBand />
+      
+    </BaseLayout>
+  );
+}
+</file>
+
+<file path="src/styles/globals.css">
+@import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@800;900&family=Inter:wght@400;500;600&display=swap');
+
+:root {
+  /* Design System Colors */
+  --navy: #0a1628;
+  --navy-light: #13243f;
+  --orange: #ff5a00;
+  --orange-glow: rgba(255, 90, 0, 0.4);
+  --white: #ffffff;
+  --bg-light: #f4f6f8;
+  --text-gray: #8a9bb1;
+  --border-subtle: #e2e8f0;
+  
+  /* Typography */
+  --font-display: 'Barlow Condensed', sans-serif;
+  --font-body: 'Inter', sans-serif;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background-color: var(--white); /* Eliminamos el fondo negro */
+  color: var(--navy);
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+}
+
+
+
+/* Contenedor Mobile-First que simula la pantalla del celular en escritorio */
+.mobile-container {
+  width: 100%;
+  min-height: 100vh;
+  position: relative;
+  overflow-x: hidden;
+  /* Eliminamos el max-width y el box-shadow */
+}
+
+/* Hacemos que el Hero Section se vea mejor en PC */
+@media (min-width: 768px) {
+  .font-display {
+    font-size: 80px !important; /* Letra más grande en escritorio */
+  }
+  
+  /* El grid de servicios se pone en 3 columnas en lugar de 1 */
+  .services-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+  }
+}
+
+/* Utilidades tipográficas */
+.font-display { font-family: var(--font-display); text-transform: uppercase; }
+.text-orange { color: var(--orange); }
+.text-white { color: var(--white); }
+
+/* Animación del botón FAB */
+@keyframes pulse-ring {
+  0% { transform: scale(0.8); box-shadow: 0 0 0 0 rgba(255, 90, 0, 0.7); }
+  70% { transform: scale(1); box-shadow: 0 0 0 15px rgba(255, 90, 0, 0); }
+  100% { transform: scale(0.8); box-shadow: 0 0 0 0 rgba(255, 90, 0, 0); }
+}
+</file>
+
+<file path="src/styles/Home.module.css">
+.page {
+  --background: #fafafa;
+  --foreground: #fff;
+
+  --text-primary: #000;
+  --text-secondary: #666;
+
+  --button-primary-hover: #383838;
+  --button-secondary-hover: #f2f2f2;
+  --button-secondary-border: #ebebeb;
+
+  display: flex;
+  min-height: 100vh;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-geist-sans);
+  background-color: var(--background);
+}
+
+.main {
+  display: flex;
+  min-height: 100vh;
+  width: 100%;
+  max-width: 800px;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: space-between;
+  background-color: var(--foreground);
+  padding: 120px 60px;
+}
+
+.intro {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  text-align: left;
+  gap: 24px;
+}
+
+.intro h1 {
+  max-width: 320px;
+  font-size: 40px;
+  font-weight: 600;
+  line-height: 48px;
+  letter-spacing: -2.4px;
+  text-wrap: balance;
+  color: var(--text-primary);
+}
+
+.intro p {
+  max-width: 440px;
+  font-size: 18px;
+  line-height: 32px;
+  text-wrap: balance;
+  color: var(--text-secondary);
+}
+
+.intro a {
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+.ctas {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  max-width: 440px;
+  gap: 16px;
+  font-size: 14px;
+}
+
+.ctas a {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 40px;
+  padding: 0 16px;
+  border-radius: 128px;
+  border: 1px solid transparent;
+  transition: 0.2s;
+  cursor: pointer;
+  width: fit-content;
+  font-weight: 500;
+}
+
+a.primary {
+  background: var(--text-primary);
+  color: var(--background);
+  gap: 8px;
+}
+
+a.secondary {
+  border-color: var(--button-secondary-border);
+}
+
+/* Enable hover only on non-touch devices */
+@media (hover: hover) and (pointer: fine) {
+  a.primary:hover {
+    background: var(--button-primary-hover);
+    border-color: transparent;
+  }
+
+  a.secondary:hover {
+    background: var(--button-secondary-hover);
+    border-color: transparent;
+  }
+}
+
+@media (max-width: 600px) {
+  .main {
+    padding: 48px 24px;
+  }
+
+  .intro {
+    gap: 16px;
+  }
+
+  .intro h1 {
+    font-size: 32px;
+    line-height: 40px;
+    letter-spacing: -1.92px;
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  .logo {
+    filter: invert();
+  }
+
+  .page {
+    --background: #000;
+    --foreground: #000;
+
+    --text-primary: #ededed;
+    --text-secondary: #999;
+
+    --button-primary-hover: #ccc;
+    --button-secondary-hover: #1a1a1a;
+    --button-secondary-border: #1a1a1a;
+  }
+}
+</file>
+
+<file path=".gitignore">
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+
+# dependencies
+/node_modules
+/.pnp
+.pnp.*
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/versions
+
+# testing
+/coverage
+
+# next.js
+/.next/
+/out/
+
+# production
+/build
+
+# misc
+.DS_Store
+*.pem
+
+# debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# env files (can opt-in for committing if needed)
+.env*
+
+# vercel
+.vercel
+
+# typescript
+*.tsbuildinfo
+next-env.d.ts
+</file>
+
+<file path="eslint.config.mjs">
+import { defineConfig, globalIgnores } from "eslint/config";
+import nextVitals from "eslint-config-next/core-web-vitals";
+
+const eslintConfig = defineConfig([
+  ...nextVitals,
+  // Override default ignores of eslint-config-next.
+  globalIgnores([
+    // Default ignores of eslint-config-next:
+    ".next/**",
+    "out/**",
+    "build/**",
+    "next-env.d.ts",
+  ]),
+]);
+
+export default eslintConfig;
+</file>
+
+<file path="jsconfig.json">
+{
+  "compilerOptions": {
+    "paths": {
+      "@/*": ["./src/*"]
+    }
+  }
+}
+</file>
+
+<file path="next.config.mjs">
+/** @type {import('next').NextConfig} */
+const nextConfig = {
+  /* config options here */
+  reactStrictMode: true,
+};
+
+export default nextConfig;
+</file>
+
+<file path="package.json">
+{
+  "name": "cerrajeria-web",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint"
+  },
+  "dependencies": {
+    "next": "16.2.9",
+    "react": "19.2.4",
+    "react-dom": "19.2.4",
+    "resend": "^6.14.0"
+  },
+  "devDependencies": {
+    "eslint": "^9",
+    "eslint-config-next": "16.2.9"
+  }
+}
+</file>
+
+<file path="README.md">
+This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/pages/api-reference/create-next-app).
+
+## Getting Started
+
+First, run the development server:
+
+```bash
+npm run dev
+# or
+yarn dev
+# or
+pnpm dev
+# or
+bun dev
+```
+
+Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+
+You can start editing the page by modifying `pages/index.js`. The page auto-updates as you edit the file.
+
+[API routes](https://nextjs.org/docs/pages/building-your-application/routing/api-routes) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.js`.
+
+The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/pages/building-your-application/routing/api-routes) instead of React pages.
+
+This project uses [`next/font`](https://nextjs.org/docs/pages/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+
+## Learn More
+
+To learn more about Next.js, take a look at the following resources:
+
+- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
+- [Learn Next.js](https://nextjs.org/learn-pages-router) - an interactive Next.js tutorial.
+
+You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+
+## Deploy on Vercel
+
+The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+
+Check out our [Next.js deployment documentation](https://nextjs.org/docs/pages/building-your-application/deploying) for more details.
+</file>
+
+</files>
