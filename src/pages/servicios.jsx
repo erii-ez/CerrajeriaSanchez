@@ -1,12 +1,13 @@
-import { useState } from 'react'; // 1. Importamos useState
+import { useState } from 'react';
 import Head from 'next/head';
 import BaseLayout from '../layouts/BaseLayout';
 import ServiceCard from '../components/ServiceCard';
 import FormContact from '../components/FormContact';
+import SearchBar from '../components/SearchBar'; // ← nuevo
 
 export default function Servicios() {
-  // 2. Creamos un estado para guardar el ID del servicio seleccionado. Empieza vacío (null).
   const [selectedService, setSelectedService] = useState(null);
+  const [busqueda, setBusqueda] = useState(''); // ← nuevo
 
   const catalogoServicios = [
     { id: 1, title: "Apertura Automotriz", icon: "🚗", description: "Apertura de vehículos sin daños...", isEmergency: true, price: "$500 MXN" },
@@ -16,8 +17,14 @@ export default function Servicios() {
     { id: 5, title: "Duplicado con Chip", icon: "🔑", description: "Corte y programación de llaves...", isEmergency: false, price: "$1,200 MXN" }
   ];
 
-const servicioEncontrado = catalogoServicios.find(s => s.id === selectedService);
-const nombreServicio = servicioEncontrado ? servicioEncontrado.title : '';
+  // Filtrado en tiempo real por título o descripción
+  const serviciosFiltrados = catalogoServicios.filter((servicio) =>
+    servicio.title.toLowerCase().includes(busqueda.toLowerCase()) ||
+    servicio.description.toLowerCase().includes(busqueda.toLowerCase())
+  );
+
+  const servicioEncontrado = catalogoServicios.find(s => s.id === selectedService);
+  const nombreServicio = servicioEncontrado ? servicioEncontrado.title : '';
 
   return (
     <BaseLayout>
@@ -33,31 +40,36 @@ const nombreServicio = servicioEncontrado ? servicioEncontrado.title : '';
       </section>
 
       <section style={{ padding: '60px 24px', backgroundColor: 'var(--bg-light)' }}>
-        <div style={{ 
-          display: 'grid', 
-          gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', 
+        <SearchBar value={busqueda} onChange={setBusqueda} /> {/* ← nuevo */}
+
+        <div style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
           gap: '24px',
           maxWidth: '1200px',
           margin: '0 auto'
         }}>
-          
-          {catalogoServicios.map((servicio) => (
-            <ServiceCard 
-              key={servicio.id}
-              title={servicio.title}
-              icon={servicio.icon}
-              description={servicio.description}
-              isEmergency={servicio.isEmergency}
-              price={servicio.price}
-              // 3. Le pasamos las nuevas propiedades a la tarjeta
-              isSelected={selectedService === servicio.id}
-              onClick={() => setSelectedService(servicio.id)}
-            />
-          ))}
-
+          {serviciosFiltrados.length > 0 ? (
+            serviciosFiltrados.map((servicio) => (
+              <ServiceCard
+                key={servicio.id}
+                title={servicio.title}
+                icon={servicio.icon}
+                description={servicio.description}
+                isEmergency={servicio.isEmergency}
+                price={servicio.price}
+                isSelected={selectedService === servicio.id}
+                onClick={() => setSelectedService(servicio.id)}
+              />
+            ))
+          ) : (
+            <p style={{ textAlign: 'center', color: 'var(--text-gray)', gridColumn: '1 / -1' }}>
+              No encontramos servicios que coincidan con "{busqueda}".
+            </p>
+          )}
         </div>
       </section>
-      {/* Sección del Formulario Asíncrono */}
+
       <section style={{ padding: '40px 24px', backgroundColor: 'var(--navy-light)', borderTop: '1px solid #1c2e4a' }}>
         <div style={{ maxWidth: '600px', margin: '0 auto' }}>
           <FormContact selectedServiceName={nombreServicio} />

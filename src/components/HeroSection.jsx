@@ -6,7 +6,7 @@ export default function HeroSection() {
       </div>
       
       <h1 className="font-display" style={{ fontSize: '64px', lineHeight: '0.9', marginBottom: '16px' }}>
-        EMERGENCIAS <br/> <span className="text-orange">24/7</span>
+        CERRAJERÍA <br/> <span className="text-orange">Sánchez</span>
       </h1>
       
       <p style={{ color: 'var(--text-gray)', fontSize: '15px', lineHeight: '1.5', marginBottom: '32px' }}>
