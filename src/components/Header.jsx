@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import Link from 'next/link';
+import QuickServicesMenu from './QuickServicesMenu';
 
 export default function Header() {
   // Estado para el menú principal
@@ -25,15 +26,15 @@ export default function Header() {
         setIsServicesOpen(false);
       }}
     >
-      <div style={{
-        backgroundColor: 'var(--navy)',
-        padding: '16px 24px',
-        display: 'flex',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        position: 'relative',
-        zIndex: 101
-      }}>
+<div style={{
+  backgroundColor: 'var(--navy)',
+  padding: '16px 24px',
+  display: 'flex',
+  justifyContent: 'space-between',
+  alignItems: 'center',
+  position: 'relative',
+  zIndex: 101
+}}>
         
         <Link href="/" style={{ display: 'flex', alignItems: 'center', gap: '8px', textDecoration: 'none' }}>
           <div style={{ background: 'var(--orange)', borderRadius: '6px', padding: '4px 6px', display: 'flex' }}>
@@ -44,7 +45,7 @@ export default function Header() {
             <span style={{ fontSize: '16px', color: 'var(--orange)' }}>SÁNCHEZ</span>
           </div>
         </Link>
-
+         <QuickServicesMenu />
         <button 
           // EVENTO DEL PUNTERO: Despliega el menú principal al pasar el ratón por encima
           onMouseEnter={() => setIsMenuOpen(true)} 

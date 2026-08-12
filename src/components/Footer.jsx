@@ -59,11 +59,17 @@ export default function Footer() {
         </svg>
         Contáctanos por WhatsApp
       </a>
-
-      {/* Aviso legal */}
-      <p style={{ fontSize: '11px', color: 'var(--text-gray)', textAlign: 'center' }}>
-        © {new Date().getFullYear()} Cerrajería Sánchez. Todos los derechos reservados.
-      </p>
+        <div style={{ textAlign: 'center', fontSize: '11px', color: 'var(--text-gray)' }}>
+        <Link
+            href="/politica-privacidad"
+            style={{ color: 'var(--text-gray)', textDecoration: 'underline' }}
+        >
+            Política de Privacidad
+        </Link>
+        <p style={{ marginTop: '8px' }}>
+            © {new Date().getFullYear()} Cerrajería Sánchez. Todos los derechos reservados.
+        </p>
+        </div>
     </footer>
   );
 }

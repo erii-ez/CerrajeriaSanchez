@@ -1,35 +1,30 @@
+// src/pages/servicios.jsx
 import { useState } from 'react';
 import Head from 'next/head';
 import BaseLayout from '../layouts/BaseLayout';
 import ServiceCard from '../components/ServiceCard';
 import FormContact from '../components/FormContact';
-import SearchBar from '../components/SearchBar'; // ← nuevo
+import SearchBar from '../components/SearchBar';
+import { catalogoServicios, categorias } from '../data/servicios';
 
 export default function Servicios() {
   const [selectedService, setSelectedService] = useState(null);
-  const [busqueda, setBusqueda] = useState(''); // ← nuevo
+  const [busqueda, setBusqueda] = useState('');
 
-  const catalogoServicios = [
-    { id: 1, title: "Apertura Automotriz", icon: "🚗", description: "Apertura de vehículos sin daños...", isEmergency: true, price: "$500 MXN" },
-    { id: 2, title: "Cerrajería Residencial", icon: "🏠", description: "Apertura de puertas principales...", isEmergency: false, price: "$450 MXN" },
-    { id: 3, title: "Seguridad Comercial", icon: "🏢", description: "Control de acceso, cerraduras...", isEmergency: false, price: "$800 MXN" },
-    { id: 4, title: "Apertura de Cajas Fuertes", icon: "🔐", description: "Servicio especializado en apertura...", isEmergency: false, price: "Cotización previa" },
-    { id: 5, title: "Duplicado con Chip", icon: "🔑", description: "Corte y programación de llaves...", isEmergency: false, price: "$1,200 MXN" }
-  ];
-
-  // Filtrado en tiempo real por título o descripción
-  const serviciosFiltrados = catalogoServicios.filter((servicio) =>
+  const coincideBusqueda = (servicio) =>
     servicio.title.toLowerCase().includes(busqueda.toLowerCase()) ||
-    servicio.description.toLowerCase().includes(busqueda.toLowerCase())
-  );
+    servicio.description.toLowerCase().includes(busqueda.toLowerCase());
 
   const servicioEncontrado = catalogoServicios.find(s => s.id === selectedService);
   const nombreServicio = servicioEncontrado ? servicioEncontrado.title : '';
 
+  // ¿Hay al menos un resultado en TODO el catálogo con la búsqueda actual?
+  const hayResultados = catalogoServicios.some(coincideBusqueda);
+
   return (
     <BaseLayout>
       <Head>
-        <title>Servicios y Catálogo | Cerrajería Express</title>
+        <title>Servicios y Catálogo | Cerrajería Sánchez</title>
       </Head>
 
       <section style={{ backgroundColor: 'var(--navy)', color: 'white', padding: '60px 24px', textAlign: 'center' }}>
@@ -40,34 +35,47 @@ export default function Servicios() {
       </section>
 
       <section style={{ padding: '60px 24px', backgroundColor: 'var(--bg-light)' }}>
-        <SearchBar value={busqueda} onChange={setBusqueda} /> {/* ← nuevo */}
+        <SearchBar value={busqueda} onChange={setBusqueda} />
 
-        <div style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
-          gap: '24px',
-          maxWidth: '1200px',
-          margin: '0 auto'
-        }}>
-          {serviciosFiltrados.length > 0 ? (
-            serviciosFiltrados.map((servicio) => (
-              <ServiceCard
-                key={servicio.id}
-                title={servicio.title}
-                icon={servicio.icon}
-                description={servicio.description}
-                isEmergency={servicio.isEmergency}
-                price={servicio.price}
-                isSelected={selectedService === servicio.id}
-                onClick={() => setSelectedService(servicio.id)}
-              />
-            ))
-          ) : (
-            <p style={{ textAlign: 'center', color: 'var(--text-gray)', gridColumn: '1 / -1' }}>
-              No encontramos servicios que coincidan con "{busqueda}".
-            </p>
-          )}
-        </div>
+        {!hayResultados ? (
+          <p style={{ textAlign: 'center', color: 'var(--text-gray)' }}>
+            No encontramos servicios que coincidan con "{busqueda}".
+          </p>
+        ) : (
+          categorias.map((cat) => {
+            const serviciosDeCategoria = catalogoServicios
+              .filter(s => s.category === cat.slug)
+              .filter(coincideBusqueda);
+
+            if (serviciosDeCategoria.length === 0) return null;
+
+            return (
+              <div key={cat.slug} style={{ maxWidth: '1200px', margin: '0 auto 48px' }}>
+                <h2 className="font-display" style={{ fontSize: '28px', marginBottom: '20px', borderBottom: '2px solid var(--orange)', display: 'inline-block', paddingBottom: '4px' }}>
+                  {cat.nombre}
+                </h2>
+                <div style={{
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+                  gap: '24px'
+                }}>
+                  {serviciosDeCategoria.map((servicio) => (
+                    <ServiceCard
+                      key={servicio.id}
+                      title={servicio.title}
+                      icon={servicio.icon}
+                      description={servicio.description}
+                      isEmergency={servicio.isEmergency}
+                      price={servicio.price}
+                      isSelected={selectedService === servicio.id}
+                      onClick={() => setSelectedService(servicio.id)}
+                    />
+                  ))}
+                </div>
+              </div>
+            );
+          })
+        )}
       </section>
 
       <section style={{ padding: '40px 24px', backgroundColor: 'var(--navy-light)', borderTop: '1px solid #1c2e4a' }}>
