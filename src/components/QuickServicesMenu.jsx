@@ -20,7 +20,7 @@ export default function QuickServicesMenu() {
     {
       id: 2,
       nombre: 'Casa',
-      slug: 'cerrajeria-residencial',
+      slug: 'apertura-chapas-candados',
       icon: (
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
           <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
@@ -30,8 +30,8 @@ export default function QuickServicesMenu() {
     },
     {
       id: 4,
-      nombre: 'Caja fuerte',
-      slug: 'apertura-cajas-fuertes',
+      nombre: 'Chip Auto',
+      slug: 'copia-llaves-auto-chip',
       icon: (
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
           <rect x="3" y="11" width="18" height="11" rx="2" />

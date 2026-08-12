@@ -1,5 +1,5 @@
-// src/pages/servicios.jsx
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
+import { useRouter } from 'next/router';
 import Head from 'next/head';
 import BaseLayout from '../layouts/BaseLayout';
 import ServiceCard from '../components/ServiceCard';
@@ -8,8 +8,27 @@ import SearchBar from '../components/SearchBar';
 import { catalogoServicios, categorias } from '../data/servicios';
 
 export default function Servicios() {
+  const router = useRouter();
   const [selectedService, setSelectedService] = useState(null);
   const [busqueda, setBusqueda] = useState('');
+  const cardRefs = useRef({}); // { [id]: HTMLElement }
+
+  // Lee el query param cuando la ruta ya está lista (Next.js tarda 1 render en poblar router.query)
+  useEffect(() => {
+    if (!router.isReady) return;
+    const { service } = router.query;
+    if (!service) return;
+
+    const servicio = catalogoServicios.find(s => s.slug === service);
+    if (!servicio) return;
+
+    setSelectedService(servicio.id);
+
+    // Espera al siguiente frame para asegurar que la card ya está montada en el DOM
+    requestAnimationFrame(() => {
+      cardRefs.current[servicio.id]?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    });
+  }, [router.isReady, router.query]);
 
   const coincideBusqueda = (servicio) =>
     servicio.title.toLowerCase().includes(busqueda.toLowerCase()) ||
@@ -17,8 +36,6 @@ export default function Servicios() {
 
   const servicioEncontrado = catalogoServicios.find(s => s.id === selectedService);
   const nombreServicio = servicioEncontrado ? servicioEncontrado.title : '';
-
-  // ¿Hay al menos un resultado en TODO el catálogo con la búsqueda actual?
   const hayResultados = catalogoServicios.some(coincideBusqueda);
 
   return (
@@ -60,16 +77,17 @@ export default function Servicios() {
                   gap: '24px'
                 }}>
                   {serviciosDeCategoria.map((servicio) => (
-                    <ServiceCard
-                      key={servicio.id}
-                      title={servicio.title}
-                      icon={servicio.icon}
-                      description={servicio.description}
-                      isEmergency={servicio.isEmergency}
-                      price={servicio.price}
-                      isSelected={selectedService === servicio.id}
-                      onClick={() => setSelectedService(servicio.id)}
-                    />
+                    <div key={servicio.id} ref={(el) => (cardRefs.current[servicio.id] = el)}>
+                      <ServiceCard
+                        title={servicio.title}
+                        icon={servicio.icon}
+                        description={servicio.description}
+                        isEmergency={servicio.isEmergency}
+                        price={servicio.price}
+                        isSelected={selectedService === servicio.id}
+                        onClick={() => setSelectedService(servicio.id)}
+                      />
+                    </div>
                   ))}
                 </div>
               </div>

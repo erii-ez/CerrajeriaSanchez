@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import QuickServicesMenu from './QuickServicesMenu';
+import { catalogoServicios, categorias } from '../data/servicios';
 
 export default function Header() {
   // Estado para el menú principal
@@ -9,13 +10,9 @@ export default function Header() {
   const [isServicesOpen, setIsServicesOpen] = useState(false);
 
   // Lista de servicios para iterar en el submenú
-  const serviciosLista = [
-    { id: 1, nombre: "Apertura Automotriz", ruta: "/servicios" },
-    { id: 2, nombre: "Cerrajería Residencial", ruta: "/servicios" },
-    { id: 3, nombre: "Seguridad Comercial", ruta: "/servicios" },
-    { id: 4, nombre: "Apertura Cajas Fuertes", ruta: "/servicios" },
-    { id: 5, nombre: "Duplicado con Chip", ruta: "/servicios" }
-  ];
+const serviciosLista = catalogoServicios
+  .filter(s => s.isEmergency) // solo urgencias en el acceso rápido del submenú
+  .map(s => ({ id: s.id, nombre: s.title, slug: s.slug, isEmergency: s.isEmergency }));
 
   return (
     <header 
