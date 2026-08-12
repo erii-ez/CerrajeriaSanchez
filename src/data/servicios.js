@@ -1,4 +1,4 @@
-// src/data/servicios.js
+
 export const catalogoServicios = [
   // ── DOMICILIO ──
   {

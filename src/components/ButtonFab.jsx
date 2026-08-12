@@ -3,7 +3,7 @@ export default function ButtonFab() {
     <a href="tel:+524686893743" style={{
       position: 'fixed',
       bottom: '24px',
-      right: 'calc(20% - 240px + 24px)',
+      right: '24px',
       backgroundColor: 'var(--orange)',
       color: 'white',
       width: '60px',
