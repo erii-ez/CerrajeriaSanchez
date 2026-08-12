@@ -43,13 +43,13 @@ const serviciosLista = catalogoServicios
           </div>
         </Link>
          <QuickServicesMenu />
-        <button 
-          // EVENTO DEL PUNTERO: Despliega el menú principal al pasar el ratón por encima
-          onMouseEnter={() => setIsMenuOpen(true)} 
-          // Mantenemos el onClick como buena práctica de accesibilidad para móviles
-          onClick={() => setIsMenuOpen(!isMenuOpen)}
-          style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '4px' }}
-        >
+<button 
+  onClick={() => setIsMenuOpen(!isMenuOpen)}
+  aria-expanded={isMenuOpen}
+  aria-haspopup="true"
+  aria-label="Abrir menú de navegación"
+  style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '4px' }}
+>
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             {isMenuOpen ? (
               <>
@@ -108,25 +108,33 @@ const serviciosLista = catalogoServicios
             {/* Despliegue dinámico de los servicios */}
             {isServicesOpen && (
               <div style={{ backgroundColor: 'var(--navy)', display: 'flex', flexDirection: 'column' }}>
-                {serviciosLista.map((servicio) => (
-                  <Link 
-                    key={servicio.id}
-                    href={servicio.ruta}
-                    onClick={() => {
-                      setIsMenuOpen(false);
-                      setIsServicesOpen(false);
-                    }}
-                    style={{ 
-                      color: 'var(--text-gray)', 
-                      padding: '12px 24px 12px 48px', 
-                      textDecoration: 'none', 
-                      fontSize: '14px',
-                      borderBottom: '1px solid rgba(255,255,255,0.02)'
-                    }}
-                  >
-                    {servicio.nombre}
-                  </Link>
-                ))}
+{serviciosLista.map((servicio) => (
+  <Link 
+    key={servicio.id}
+    href={`/servicios?service=${servicio.slug}`}
+    onClick={() => {
+      setIsMenuOpen(false);
+      setIsServicesOpen(false);
+    }}
+    style={{ 
+      color: 'var(--text-gray)', 
+      padding: '12px 24px 12px 48px', 
+      textDecoration: 'none', 
+      fontSize: '14px',
+      borderBottom: '1px solid rgba(255,255,255,0.02)',
+      display: 'flex',
+      alignItems: 'center',
+      gap: '8px'
+    }}
+  >
+    {servicio.nombre}
+    {servicio.isEmergency && (
+      <span style={{ backgroundColor: 'var(--orange)', color: 'white', fontSize: '9px', padding: '2px 6px', borderRadius: '10px', fontWeight: 'bold' }}>
+        24/7
+      </span>
+    )}
+  </Link>
+))}
               </div>
             )}
           </div>
